@@ -1,0 +1,186 @@
+//#define LED_A
+//#define A_to_B
+//#define array5
+// #define Initiation_ControlPanel
+
+#ifdef LED_A
+    while (true)
+    {
+        int i = 0;
+        int array[2] = {0};
+        while (i < 2)
+        {
+            char buff[100];
+            int dash_dot = dot_dash();
+            if (dash_dot == dash)
+            {
+                sprintf(buff, "LONG \n");
+                SerialPuts(buff);
+            }
+            else if (dash_dot == dot)
+            {
+                sprintf(buff, "SHORT \n");
+                SerialPuts(buff);
+            }
+            array[i] = dash_dot;
+            ++i;
+        }
+        if (array[0] == dot && array[1] == dash)
+        {
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, true);
+        }
+        else
+        {
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, false);
+        }
+    }
+
+#endif
+
+#ifdef A_to_B
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, true);
+
+    int i = 0;
+    int array[2] = {0};
+    while (i < 2)
+    {
+        char buff[100];
+        int dash_dot = dot_dash();
+        if (dash_dot == dash)
+        {
+            sprintf(buff, "LONG \n");
+            SerialPuts(buff);
+        }
+        else if (dash_dot == dot)
+        {
+            sprintf(buff, "SHORT \n");
+            SerialPuts(buff);
+        }
+        array[i] = dash_dot;
+        ++i;
+    }
+    if (array[0] == dot && array[1] == dash)
+    {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, false);
+
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, true);
+    }
+
+#endif
+
+#ifdef array5
+    int i = 0;
+    int array[5] = {5, 5, 5, 5, 5};
+    uint32_t t_i = 0;
+    uint32_t t_f = 0;
+    uint32_t pause = 0;
+
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, true);
+
+    while (i < 5)
+    {
+        while (t_f != 0 && pause <= 3000)
+        {
+            if (!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
+            {
+                break;
+            }
+            else
+            {
+                pause = HAL_GetTick() - t_f;
+            }
+        }
+        if (pause > 3000)
+        {
+            break;
+        }
+        // do
+        // {
+        //     char eh[100];
+        //     sprintf(eh, "why \n");
+        //     SerialPuts(eh);
+
+        //     pause = HAL_GetTick();
+        // } while (!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) && t_i != 0);
+
+        // if (pause - t_f > 3000)
+        //     break;
+        while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
+            ;
+        t_i = HAL_GetTick();
+
+        while (!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
+            ;
+        t_f = HAL_GetTick();
+
+        char buff[100];
+        int dash_dot = 0;
+
+        uint32_t delta_t = t_f - t_i;
+
+        if (delta_t < t_dash)
+        {
+            dash_dot = dot;
+        }
+        else
+        {
+            dash_dot = dash;
+        }
+
+        if (dash_dot == dash)
+        {
+            sprintf(buff, "LONG \n");
+            SerialPuts(buff);
+        }
+        else if (dash_dot == dot)
+        {
+            sprintf(buff, "SHORT \n");
+            SerialPuts(buff);
+        }
+        array[i] = dash_dot;
+        ++i;
+    }
+
+    for (; i < 5; ++i)
+    {
+        array[i] = 0;
+    }
+
+    if (array[0] == dot && array[1] == dash)
+    {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, false);
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, true);
+    }
+    else
+    {
+        char eh[100];
+        sprintf(eh, "end \n");
+        SerialPuts(eh);
+    }
+
+#endif
+
+
+#ifdef Initiation_ControlPanel
+    bool state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+    bool stateA = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3);
+    if (state | stateA)
+    {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+    }
+    else
+    {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+    }
+
+    // while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+    // {
+    // }
+    // while (1)
+    // // if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == 1)
+    // {
+    //     HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+    //     HAL_Delay(250);
+    // }
+
+#endif
