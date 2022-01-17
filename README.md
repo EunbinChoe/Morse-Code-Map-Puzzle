@@ -7,6 +7,8 @@ To solve the puzzle, the player has to check the first letter of the country tha
 For the software, C++ language was used,
 and for hardware, STM 32 Nucleo-64 board was used as a main board with 4 additional breadboards to connect the LED's.
 
+DEMONSTRATION LINK: https://youtu.be/Sf__7BYd8qc
+
 CREDITS
 Designed and created by:
 Eunbin Choe and May Toyingsirikul
